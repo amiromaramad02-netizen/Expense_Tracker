@@ -1,0 +1,120 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'pages/home_page.dart';
+
+void main() {
+  runApp(const ExpenseTrackerApp());
+}
+
+class ExpenseTrackerApp extends StatelessWidget {
+  const ExpenseTrackerApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const primary = Color(0xFF7C4DFF);       // vivid purple
+    const primaryLight = Color(0xFFFAF6FF);  // very pale lilac bg
+    final colorScheme = ColorScheme.fromSeed(seedColor: primary);
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Expense Tracker',
+      theme: ThemeData(
+        colorScheme: colorScheme,
+        primaryColor: primary,
+        scaffoldBackgroundColor: primaryLight,
+        useMaterial3: true,
+        textTheme: GoogleFonts.interTextTheme(
+          Theme.of(context).textTheme,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.black87,
+          elevation: 0,
+          centerTitle: false,
+        ),
+        bottomAppBarTheme: const BottomAppBarTheme(color: Colors.white, elevation: 6),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color(0xFF6A5AFF),
+          elevation: 8,
+        ),
+      ),
+      home: const HomeShell(),
+    );
+  }
+}
+
+class HomeShell extends StatefulWidget {
+  const HomeShell({super.key});
+  @override
+  State<HomeShell> createState() => _HomeShellState();
+}
+
+class _HomeShellState extends State<HomeShell> {
+  int _index = 0;
+  static final _pages = [
+    const HomePage(),
+    const Center(child: Text('Tasks (placeholder)')),
+    const Center(child: Text('Progress (placeholder)')),
+    const Center(child: Text('Profile (placeholder)')),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _pages[_index],
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // navigate to add screen if you have one
+          // Navigator.push(context, MaterialPageRoute(builder: (_) => const AddExpensePage()));
+        },
+        child: const Icon(Icons.add, size: 28),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8,
+        child: SizedBox(
+          height: 72,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(children: [
+                _NavButton(icon: Icons.home, label: 'Home', active: _index == 0, onTap: () => setState(() => _index = 0)),
+                _NavButton(icon: Icons.list_alt, label: 'Tasks', active: _index == 1, onTap: () => setState(() => _index = 1)),
+              ]),
+              Row(children: [
+                _NavButton(icon: Icons.show_chart, label: 'Progress', active: _index == 2, onTap: () => setState(() => _index = 2)),
+                _NavButton(icon: Icons.person_outline, label: 'Profile', active: _index == 3, onTap: () => setState(() => _index = 3)),
+              ]),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavButton extends StatelessWidget {
+  const _NavButton({required this.icon, required this.label, required this.active, required this.onTap});
+  final IconData icon;
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = active ? Theme.of(context).primaryColor : Colors.grey.shade600;
+    return MaterialButton(
+      minWidth: 72,
+      onPressed: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color),
+          const SizedBox(height: 4),
+          Text(label, style: TextStyle(fontSize: 12, color: color)),
+        ],
+      ),
+    );
+  }
+}

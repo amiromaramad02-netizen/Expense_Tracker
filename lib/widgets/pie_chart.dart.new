@@ -1,0 +1,153 @@
+import 'dart:math';
+import 'package:flutter/material.dart';
+
+class PieChart extends StatelessWidget {
+  final Map<String, double> data;
+  final double strokeWidth;
+  final bool showLegend;
+  final String Function(double)? valueFormatter;
+
+  const PieChart({
+    super.key,
+    required this.data,
+    this.strokeWidth = 12,
+    this.showLegend = true,
+    this.valueFormatter,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final total = data.values.fold(0.0, (a, b) => a + b);
+    final palette = [
+      Theme.of(context).primaryColor,
+      Theme.of(context).primaryColor.withOpacity(0.8),
+      Colors.teal,
+      Colors.orangeAccent,
+      Colors.blueAccent,
+      Colors.pinkAccent,
+      Colors.deepPurpleAccent,
+      Colors.greenAccent,
+    ];
+
+    final entries = data.entries.toList();
+
+    return LayoutBuilder(builder: (context, constraints) {
+      final size = constraints.biggest;
+      final chartSize = Size(size.width, size.height);
+
+      // If legend is disabled, render a compact centered donut that uses the
+      // full available square area (so small widgets show a larger, clearer chart).
+      if (!showLegend) {
+        final d = min(chartSize.width, chartSize.height);
+        return SizedBox(
+          width: chartSize.width,
+          height: chartSize.height,
+          child: Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: d,
+              height: d,
+              child: CustomPaint(
+                painter: _PiePainter(entries, palette, strokeWidth: strokeWidth, valueFormatter: valueFormatter),
+              ),
+            ),
+          ),
+        );
+      }
+
+      // Default layout: chart on left, legend on right
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Chart
+          SizedBox(
+            width: chartSize.width * 0.6,
+            height: chartSize.height,
+            child: CustomPaint(
+              painter: _PiePainter(entries, palette, strokeWidth: strokeWidth, valueFormatter: valueFormatter),
+            ),
+          ),
+          // Legend
+          if (showLegend)
+            SizedBox(
+              width: chartSize.width * 0.4,
+              height: chartSize.height,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(entries.length, (i) {
+                    final e = entries[i];
+                    final color = palette[i % palette.length];
+                    final percent = total > 0 ? (e.value / total) * 100 : 0.0;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Row(
+                        children: [
+                          Container(width: 12, height: 12, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3))),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(e.key, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600))),
+                          const SizedBox(width: 8),
+                          Text(valueFormatter?.call(e.value) ?? e.value.toStringAsFixed(2), style: TextStyle(color: Colors.grey.shade700, fontSize: 12)),
+                          const SizedBox(width: 6),
+                          Text('${percent.toStringAsFixed(0)}%', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                        ],
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ),
+        ],
+      );
+    });
+  }
+}
+
+class _PiePainter extends CustomPainter {
+  final List<MapEntry<String, double>> entries;
+  final List<Color> palette;
+  final double strokeWidth;
+  final String Function(double)? valueFormatter;
+
+  _PiePainter(this.entries, this.palette, {this.strokeWidth = 12, this.valueFormatter});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final total = entries.fold<double>(0.0, (a, b) => a + b.value);
+    final rect = Offset.zero & size;
+    final center = rect.center;
+    final radius = (size.shortestSide / 2) - strokeWidth;
+    final paint = Paint()..style = PaintingStyle.fill;
+
+    double startRads = -pi / 2;
+    for (var i = 0; i < entries.length; i++) {
+      final entry = entries[i];
+      final sweep = total == 0 ? 0.0 : (entry.value / total) * 2 * pi;
+      paint.color = palette[i % palette.length];
+      if (sweep > 0) {
+        canvas.drawArc(Rect.fromCircle(center: center, radius: radius), startRads, sweep, true, paint);
+      }
+      startRads += sweep;
+    }
+
+    // Draw center white circle to create donut effect
+    final innerPaint = Paint()..color = Colors.white;
+    canvas.drawCircle(center, radius - strokeWidth * 0.8, innerPaint);
+
+    // Draw total text (size scales with radius so it's readable on small charts)
+    final totalText = valueFormatter?.call(total) ?? total.toStringAsFixed(2);
+    final fontSize = max(10.0, (radius * 0.45));
+    final tp = TextPainter(
+      text: TextSpan(
+        text: totalText,
+        style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.black87),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    tp.layout();
+    tp.paint(canvas, center - Offset(tp.width / 2, tp.height / 2));
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
