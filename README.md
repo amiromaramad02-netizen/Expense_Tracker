@@ -73,7 +73,7 @@ Project structure
 
 ---
 
-## ▶️ Running the app
+Running the app
 
 - Run on iOS simulator (macOS):
 
@@ -117,13 +117,13 @@ Run them with `flutter test`.
 Troubleshooting & Known Issues
 
 - If an iOS build fails during packaging with errors that mention Windows-only types (e.g., `UnmodifiableUint8ListView`) it usually means a Windows-only package (such as `win32`) is in the dependency graph transitively. Run the preflight script and follow the suggestions in `docs/BUILD.md`. ⚠️
-- There are some `info`-level deprecation hints (e.g., `.withOpacity()` recommendations). These are not critical but should be addressed over time for code health. 🔄
+- There are some `info`-level deprecation hints (e.g., `.withOpacity()` recommendations). These are not critical but should be addressed over time for code health. 
 
 ---
 
  Recommended next steps for CI
 
-- Add a job to run: `./scripts/check_platform_deps.sh`, `flutter analyze`, and `flutter test` on pull requests to catch regressions and platform-dependency issues early. 🔁
+- Add a job to run: `./scripts/check_platform_deps.sh`, `flutter analyze`, and `flutter test` on pull requests to catch regressions and platform-dependency issues early. 
 
 ---
 
