@@ -1,13 +1,13 @@
 # ExpenseTracker 🧾
 
-> Lightweight expense tracker built with Flutter — supports per-account persistence, CSV export, and platform preflight checks for reliable Android/iOS builds.
+> Lightweight expense tracker built with Flutter — supports per-account persistence, and platform preflight checks for reliable Android/iOS builds.
 
 ---
 
 ## 🚀 Quick summary
 
 - **Framework:** Flutter (stable)
-- **Purpose:** Track expenses per user account, export CSVs, and view spending progress
+- **Purpose:** Track expenses per user account, and view spending progress
 - **Platforms:** Android, iOS, macOS, Web (desktop support available)
 
 ---
