@@ -1,6 +1,6 @@
 ExpenseTracker 
 
-> Lightweight expense tracker built with Flutter — supports per-account persistence, and platform preflight checks for reliable Android/iOS builds.
+> Expense tracker built with Flutter — supports per-account persistence.
 
 ---
 
