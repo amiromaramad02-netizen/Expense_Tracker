@@ -1,10 +1,10 @@
-# ExpenseTracker 🧾
+ExpenseTracker 
 
 > Lightweight expense tracker built with Flutter — supports per-account persistence, and platform preflight checks for reliable Android/iOS builds.
 
 ---
 
-## 🚀 Quick summary
+Quick summary
 
 - **Framework:** Flutter (stable)
 - **Purpose:** Track expenses per user account, and view spending progress
@@ -12,7 +12,7 @@
 
 ---
 
-## 🔧 Requirements
+Requirements
 
 - Flutter 3.38 (or compatible stable release)
 - Xcode (for iOS/macOS builds)
@@ -23,7 +23,7 @@ Run `flutter doctor -v` to verify your environment.
 
 ---
 
-## 🧭 Project structure (high level)
+Project structure 
 
 - `lib/` — App source
 - `lib/pages/` — Screens (Login, Home, Progress, etc.)
@@ -33,9 +33,7 @@ Run `flutter doctor -v` to verify your environment.
 - `test/` — Unit & widget tests
 - `integration_test/` — Integration tests
 
----
-
-## ⚙️ Setup & first run
+-Setup & first run
 
 1. Clone the repo and enter the project:
 
@@ -99,16 +97,15 @@ If you run into packaging build errors referencing packages like `win32`, run th
 
 ---
 
-## ✨ Notable features & UX notes
+Notable features & UX notes
 
 - Per-account persistence: each account's expenses are stored separately in `SharedPreferences` (keys prefixed with `expenses_v1_`). Signing out clears in-memory data; signing in reloads the appropriate stored expenses. Tests validate the sign-up/logout/login cycle. ✅
 - Saved credentials: optional 'Remember me' and saved password support for convenience (stored in `SharedPreferences` for demo purposes). Consider encryption or secure storage for production. 🔐
-- CSV export: expenses can be exported to CSV and shared via the platform share sheet (temporary file written with `path_provider` + `share_plus`). 📤
 - Accessibility guard: `TextScaleLimiter` clamps extreme OS text scaling for critical headings and large numbers to prevent layout breakage (applied to Home; can be extended to other pages). ♿
 
 ---
 
-## 🧪 Tests included
+Tests included
 
 - Unit tests for store persistence (`test/auth_expense_persistence_test.dart`).
 - Widget tests for login/signup and saved-account flows (`test/login_signup_widget_test.dart`).
@@ -117,14 +114,14 @@ Run them with `flutter test`.
 
 ---
 
-## 🛠 Troubleshooting & Known Issues
+Troubleshooting & Known Issues
 
 - If an iOS build fails during packaging with errors that mention Windows-only types (e.g., `UnmodifiableUint8ListView`) it usually means a Windows-only package (such as `win32`) is in the dependency graph transitively. Run the preflight script and follow the suggestions in `docs/BUILD.md`. ⚠️
 - There are some `info`-level deprecation hints (e.g., `.withOpacity()` recommendations). These are not critical but should be addressed over time for code health. 🔄
 
 ---
 
-## ✅ Recommended next steps for CI
+ Recommended next steps for CI
 
 - Add a job to run: `./scripts/check_platform_deps.sh`, `flutter analyze`, and `flutter test` on pull requests to catch regressions and platform-dependency issues early. 🔁
 
